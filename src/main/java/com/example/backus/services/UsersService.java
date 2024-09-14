@@ -8,10 +8,13 @@ import com.example.backus.models.entity.Users;
 import com.example.backus.repositorys.RolesRepository;
 import com.example.backus.repositorys.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,7 +41,8 @@ public class UsersService {
         newUser.setDocument(usersRequest.document());
         newUser.setEmail(usersRequest.email());
         Optional<Roles> rol = rolesRepository.findById(usersRequest.RolId());
-
+        String hashedPassword = Encrypt.hashPassword(usersRequest.password());
+        newUser.setPassword(hashedPassword);
         newUser.setRoles(rol.orElseThrow());
 
         Users savedUser = usersRepository.save(newUser);
@@ -63,13 +67,52 @@ public class UsersService {
             return ResponseEntity.notFound().build();
         }
     }
+    public ResponseEntity<Object> login(String email, String password) {
+        Optional<Users> optionalUser = usersRepository.findByEmail(email);
 
+        if (optionalUser.isEmpty()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Usuario no encontrado");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+
+        Users user = optionalUser.get();
+
+        // Hashear la contraseña ingresada
+        String hashedInputPassword = Encrypt.hashPassword(password);
+
+        // Comparar el hash de la contraseña ingresada con el hash almacenado
+        if (!hashedInputPassword.equals(user.getPassword())) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Contrasena incorrecta");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+
+        // Login exitoso
+        return ResponseEntity.ok(mapToUserResponse(user));
+    }
+    public ResponseEntity<Object> Validate(String token, String email) {
+        Optional<Users> optionalUsers = usersRepository.findByPasswordAndEmail(token, email);
+        if (optionalUsers.isEmpty()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("status", "UNAUTHORIZED");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }else {
+            Map<String, String> response = new HashMap<>();
+            if(optionalUsers.get().getRoles().getId() != 1){
+                response.put("status", "AUTHORIZED");
+            }else{
+                response.put("status", "UNAUTHORIZED");
+            }
+            return ResponseEntity.ok(response);
+        }
+    }
     public void delete(Long id) {
         usersRepository.deleteById(id);
     }
 
     private UsersResponse mapToUserResponse(Users user){
-        return new UsersResponse(user.getId(), user.getName(), user.getAdress(), user.getPhone(), user.getDocument(), user.getEmail(), mapToRolesResponse(user.getRoles()));
+        return new UsersResponse(user.getId(), user.getName(), user.getAdress(), user.getPhone(), user.getDocument(), user.getEmail(), user.getPassword(),mapToRolesResponse(user.getRoles()));
     }
     private RolesResponse mapToRolesResponse(Roles rol){
         return new RolesResponse(rol.getId(), rol.getName(), rol.getDescription());

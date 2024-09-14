@@ -7,6 +7,7 @@ public record UsersRequest(
         String phone,
         String document,
         String email,
+        String password,
         Long RolId
 ) {
 }

@@ -1,5 +1,8 @@
 package com.example.backus.models.dto;
 
+import lombok.Builder;
+
+@Builder
 public record UsersResponse(
         Long id,
         String name,
@@ -7,6 +10,7 @@ public record UsersResponse(
         String phone,
         String document,
         String email,
+        String passwordtoken,
         RolesResponse rol
 ) {
 }
