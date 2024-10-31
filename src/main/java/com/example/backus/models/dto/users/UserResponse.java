@@ -1,13 +1,15 @@
-package com.example.backus.models.dto;
+package com.example.backus.models.dto.users;
 
-public record UsersRequest(
+import lombok.Builder;
+
+@Builder
+public record UserResponse(
         Long id,
         String username,
         String name,
         String adress,
         String phone,
         String document,
-        String password,
-        Long RolId
+        RolResponse rol
 ) {
 }

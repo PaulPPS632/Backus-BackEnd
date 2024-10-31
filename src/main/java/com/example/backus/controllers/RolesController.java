@@ -2,9 +2,7 @@ package com.example.backus.controllers;
 
 import com.example.backus.models.dto.RolesRequest;
 import com.example.backus.models.dto.RolesResponse;
-import com.example.backus.models.dto.UsersRequest;
-import com.example.backus.models.dto.UsersResponse;
-import com.example.backus.services.RolesService;
+import com.example.backus.service.User.RolesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
