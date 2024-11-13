@@ -54,8 +54,8 @@ public class MarcaService {
         return new Marca().builder().nombre(marcaRequest.nombre()).build();
     }
 
-    public void update(Long id, MarcaRequest marca) {
-        Optional<Marca> m = marcaRepository.findById(id);
+    public void update(MarcaRequest marca) {
+        Optional<Marca> m = marcaRepository.findById(marca.id());
         if(m.isPresent()){
             Marca actual = m.get();
             actual.setNombre(marca.nombre());

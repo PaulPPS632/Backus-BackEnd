@@ -1,17 +1,16 @@
 package com.example.backus.controllers.inventario;
 
-
 import com.example.backus.models.dto.inventario.*;
 import com.example.backus.service.inventario.MarcaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+
 @RestController
-@RequestMapping("/inventory/marca")
+@RequestMapping("/api/marca")
 @RequiredArgsConstructor
 public class MarcaController {
     
@@ -47,10 +46,10 @@ public class MarcaController {
         marcaService.savesAll(marcas);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable("id") Long id, @RequestBody MarcaRequest marca) {
-        marcaService.update(id, marca);
+    public void update(@RequestBody MarcaRequest marca) {
+        marcaService.update(marca);
     }
 
     @DeleteMapping("{id}")

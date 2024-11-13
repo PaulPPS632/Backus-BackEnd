@@ -34,8 +34,7 @@ public class ProductoService {
     private final ProductoRepository productoRepository;
     private final MarcaRepository marcaRepository;
     private final CategoriaRepository categoriaRepository;
-    private final ArchivoRepository archivoRepository;
-
+    private final CloudinaryService cloudinaryService;
     //@Value("${aws.namebucket}")
     //private String namebucket;
 
@@ -72,6 +71,11 @@ public class ProductoService {
         }
         */
 
+        Archivo ImagenPrincipal = cloudinaryService.uploadFile(fileprincipal);
+        List<Archivo> imagenes = new ArrayList<>();
+        for (MultipartFile file : files){
+            imagenes.add(cloudinaryService.uploadFile(file));
+        }
         Producto nuevo = new Producto().builder()
                 .nombre(producto.nombre())
                 .pn(producto.pn())
@@ -82,8 +86,8 @@ public class ProductoService {
                 .categoria(categoria)
                 .garantia_cliente(producto.garantia_cliente())
                 .garantia_total(producto.garantia_total())
-                //.archivo_Principal(s3service.uploadObject(fileprincipal,"imagen_producto", "producto"))
-                //.archivos(archivos)
+                .archivo_Principal(ImagenPrincipal)
+                .archivos(imagenes)
                 .build();
 
         if(marca.getProductos() == null){
@@ -183,6 +187,17 @@ public class ProductoService {
         }
         */
         // Guardamos el producto actualizado
+
+
+        Archivo ImagenPrincipal = cloudinaryService.uploadFile(fileprincipal);
+        List<Archivo> imagenes = new ArrayList<>();
+        for (MultipartFile file : files){
+            imagenes.add(cloudinaryService.uploadFile(file));
+        }
+        productoActual.setArchivo_Principal(ImagenPrincipal);
+        productoActual.setArchivos(imagenes);
+
+
         productoRepository.save(productoActual);
 
         // Guardamos la categoría actual si ha cambiado

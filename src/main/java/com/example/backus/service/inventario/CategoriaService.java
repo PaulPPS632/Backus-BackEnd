@@ -43,9 +43,9 @@ public class CategoriaService {
     public void savesAll(CategoriasRequest marcasRequest){
         categoriaRepository.saveAll(marcasRequest.categorias().stream().map(this::mapToCategoria).toList());
     }
-    public void update(Long id, CategoriaRequest categoriaRequest) {
-        Optional<Categoria> categoria = categoriaRepository.findById(id);
-        if(categoria.isEmpty()) throw new EntityNotFoundException("Categoria no encontrada con el id: " + id);
+    public void update(CategoriaRequest categoriaRequest) {
+        Optional<Categoria> categoria = categoriaRepository.findById(categoriaRequest.id());
+        if(categoria.isEmpty()) throw new EntityNotFoundException("Categoria no encontrada con el id: " + categoriaRequest.id());
         Categoria actual = categoria.get();
         actual.setNombre(categoriaRequest.nombre());
         actual.setDescripcion(categoriaRequest.descripcion());

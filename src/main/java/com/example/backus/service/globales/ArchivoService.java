@@ -16,15 +16,8 @@ public class ArchivoService {
 
     private final ArchivoRepository archivoRepository;
 
-    public Map<String, List<String>>  ImagenesPublicitarias(){
-        //recolectalos datos por tipo y los ordena en un mar con clave descripcion y valor las url
-        return archivoRepository.findAllByTipoOrderByDescripcion("imagenes_publicitarias")
-                .stream().collect(Collectors.groupingBy(
-                        Archivo::getDescripcion,
-                        Collectors.mapping(Archivo::getUrl, Collectors.toList())));
-    }
 
-    public void save(String tipo, List<MultipartFile> files) {
+    public void saves(List<MultipartFile> files) {
 
         //archivoRepository.saveAll();
     }

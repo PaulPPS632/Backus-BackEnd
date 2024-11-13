@@ -4,12 +4,15 @@ import com.example.backus.models.dto.inventario.CategoriaDTO;
 import com.example.backus.models.dto.inventario.ProductoRequest;
 import com.example.backus.models.dto.inventario.ProductoResponse;
 import com.example.backus.service.inventario.ProductoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -52,26 +55,38 @@ public class ProductoController {
         return productoService.getByCategoria(id);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/{keyboard}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductoResponse> getByKey(@RequestParam("keyboard") String keyboard){return productoService.Busqueda(keyboard);}
+    public List<ProductoResponse> getByKey(@PathVariable("keyboard") String keyboard){return productoService.Busqueda(keyboard);}
 
     @PostMapping(consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
     public void save(
-            @RequestPart("producto") ProductoRequest producto,
+            @RequestPart("producto") String productoJson,
             @RequestPart("files") List<MultipartFile> files,
             @RequestPart("fileprincipal") MultipartFile fileprincipal){
+        ProductoRequest producto = null;
+        try {
+            producto = new ObjectMapper().readValue(productoJson, ProductoRequest.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         productoService.save(producto, files, fileprincipal);
     }
 
     @PutMapping(consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.OK)
     public void update(
-            @RequestPart("producto") ProductoRequest producto,
+            @RequestPart("producto") String productoJson,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             @RequestPart(value="fileprincipal", required = false) MultipartFile fileprincipal
     ){
+        ProductoRequest producto = null;
+        try {
+            producto = new ObjectMapper().readValue(productoJson, ProductoRequest.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         productoService.update(producto, files,fileprincipal);
     }
 

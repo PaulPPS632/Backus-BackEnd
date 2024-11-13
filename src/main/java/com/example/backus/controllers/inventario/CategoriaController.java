@@ -51,10 +51,10 @@ public class CategoriaController {
         return categoriaService.SubCategoriaBelogns(id);
     }
     */
-    @PutMapping("/{id}")
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable("id") Long id, @RequestBody CategoriaRequest marca) {
-        categoriaService.update(id, marca);
+    public void update( @RequestBody CategoriaRequest marca) {
+        categoriaService.update(marca);
     }
 
     @DeleteMapping("{id}")
