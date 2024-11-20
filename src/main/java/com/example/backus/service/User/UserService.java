@@ -121,6 +121,13 @@ public class UserService {
             return ResponseEntity.status(500).body(UserResponse.builder().build());
         }
     }
+    public Users getUserByUserID(String id) {
+        if(!id.isEmpty()){
+            return userRepository.findById(id).orElseThrow();
+        }else {
+            return Users.builder().build();
+        }
+    }
     public ResponseEntity<List<UserResponse>> getUserDashboard() {
         return ResponseEntity.ok(userRepository.findByRoles_NameNot("cliente").stream().map(this::maptoUserResponse).toList());
     }

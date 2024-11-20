@@ -117,6 +117,10 @@ public class PedidosService {
     public ResponseEntity<List<Pedidos>> getPedidosByUsername(String username) {
         return ResponseEntity.ok(pedidosReStockRepository.findByUsername(username));
     }
+    public ResponseEntity<List<Pedidos>> getPedidosByUserId(String id) {
+        Users usuario = userService.getUserByUserID(id);
+        return ResponseEntity.ok(pedidosReStockRepository.findByUsername(usuario.getUsername()));
+    }
 
     public void cambios(Pedidos pedido) {
         pedidosReStockRepository.save(pedido);

@@ -188,14 +188,35 @@ public class ProductoService {
         */
         // Guardamos el producto actualizado
 
+        List<String> eliminadas = productoActual.getArchivos().stream().map(Archivo::getUrl).filter(url -> !productoRequest.imageurl().contains(url)).collect(Collectors.toList());
 
-        Archivo ImagenPrincipal = cloudinaryService.uploadFile(fileprincipal);
-        List<Archivo> imagenes = new ArrayList<>();
-        for (MultipartFile file : files){
-            imagenes.add(cloudinaryService.uploadFile(file));
+
+        if(!eliminadas.isEmpty()){
+            productoActual.getArchivos().removeIf(archivo -> eliminadas.contains(archivo.getUrl()));
+            cloudinaryService.deleteFiles(eliminadas);
         }
-        productoActual.setArchivo_Principal(ImagenPrincipal);
-        productoActual.setArchivos(imagenes);
+        if (productoRequest.imagen_principal() == "" && productoActual.getArchivo_Principal() != null) {
+            String url = productoActual.getArchivo_Principal().getUrl();
+            productoActual.setArchivo_Principal(null);
+            cloudinaryService.deleteFile(url);
+        }
+
+        if(!fileprincipal.isEmpty()){
+            Archivo ImagenPrincipal = cloudinaryService.uploadFile(fileprincipal);
+            productoActual.setArchivo_Principal(ImagenPrincipal);
+        }
+        if(files != null ){
+            List<Archivo> imagenes = new ArrayList<>();
+
+            for (MultipartFile file : files){
+                imagenes.add(cloudinaryService.uploadFile(file));
+            }
+            productoActual.getArchivos().addAll(imagenes);
+        }
+
+
+
+
 
 
         productoRepository.save(productoActual);

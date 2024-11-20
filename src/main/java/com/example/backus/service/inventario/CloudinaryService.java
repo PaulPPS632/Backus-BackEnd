@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -30,5 +31,11 @@ public class CloudinaryService {
         } catch (IOException e) {
             throw new RuntimeException("Error al cargar el archivo a Cloudinary", e);
         }
+    }
+    public void deleteFiles(List<String> urls){
+        archivoRepository.deleteByUrlIn(urls);
+    }
+    public void deleteFile(String url){
+        archivoRepository.deleteByUrl(url);
     }
 }

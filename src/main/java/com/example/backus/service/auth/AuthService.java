@@ -60,7 +60,9 @@ public class AuthService {
     }
     public Map<String, Object> validate(String token) {
         Map<String, Object> response = jwtService.validate(token);
-        response.put("rol",userRepository.findByUsername((String) response.get("username")).orElseThrow().getRoles().getName());
+        Users usuario = userRepository.findByUsername((String) response.get("username")).orElseThrow();
+        response.put("rol",usuario.getRoles().getName());
+        response.put("usuarioId",usuario.getId());
         return response;
     }
 }

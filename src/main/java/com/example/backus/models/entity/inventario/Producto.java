@@ -26,6 +26,9 @@ public class Producto {
 
     private Double garantia_cliente;
     private Double garantia_total;
+    //quitar garantias
+
+
     private Double Stock;
     private Double precio;
 
